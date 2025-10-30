@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { GiSpinningBlades } from "react-icons/gi";
 import PieChart from "../PieChart/PieChart";
 import Employees from "./Employees";
 
-function EmployeesFeedback({employees, loading}) {
+function EmployeesFeedback({ employees = [], loading }) {
+  const [scoreFilter, setScoreFilter] = useState(""); // score filter
+  const [startDate, setStartDate] = useState(""); // date from
+  const [endDate, setEndDate] = useState(""); // date to
 
+  // لو البيانات لسه بتتحمل
   if (loading) {
     return (
       <div className="flex justify-center items-center h-60 text-gray-500">
@@ -13,16 +17,81 @@ function EmployeesFeedback({employees, loading}) {
     );
   }
 
+  // 🧠 فلترة الموظفين حسب score والتاريخ
+  const filteredEmployees = useMemo(() => {
+    return employees.filter((emp) => {
+      const empDate = new Date(emp.date);
+      const start = startDate ? new Date(startDate) : null;
+      const end = endDate ? new Date(endDate) : null;
+
+      const matchScore =
+        !scoreFilter || String(emp.score) === String(scoreFilter);
+      const matchStart = !start || empDate >= start;
+      const matchEnd = !end || empDate <= end;
+
+      return matchScore && matchStart && matchEnd;
+    });
+  }, [employees, scoreFilter, startDate, endDate]);
+
   return (
     <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 bg-white">
-      <h1 className="text-2xl sm:text-sm font-bold text-gray-800 mb-3">
+      <h1 className="text-2xl font-bold text-gray-800 mb-3">
         Employee Feedback
       </h1>
-      <p className="text-gray-400">
+      <p className="text-gray-400 mb-4">
         Review and analyze employee feedback data
       </p>
 
-      <div className="hidden sm:block overflow-x-auto mt-5 rounded-md shadow-sm border border-gray-200">
+      {/* 🔍 Filters Section */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-5 bg-gray-50 p-4 rounded-md border">
+        <div className="flex flex-col">
+          <label className="text-sm text-gray-600 mb-1">Filter by Score</label>
+          <input
+            type="number"
+            min="1"
+            max="10"
+            placeholder="Enter score"
+            value={scoreFilter}
+            onChange={(e) => setScoreFilter(e.target.value)}
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label className="text-sm text-gray-600 mb-1">Start Date</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label className="text-sm text-gray-600 mb-1">End Date</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+
+        {/* Reset button */}
+        <button
+          onClick={() => {
+            setScoreFilter("");
+            setStartDate("");
+            setEndDate("");
+          }}
+          className="mt-2 sm:mt-6 bg-red-500 text-white text-sm px-4 py-2 rounded-md hover:bg-red-600"
+        >
+          Reset
+        </button>
+      </div>
+
+      {/* 🧾 Table */}
+      <div className="hidden sm:block overflow-x-auto rounded-md shadow-sm border border-gray-200">
         <table className="min-w-full text-sm">
           <thead className="text-gray-700 capitalize text-sm font-semibold bg-gray-100">
             <tr>
@@ -36,8 +105,8 @@ function EmployeesFeedback({employees, loading}) {
           </thead>
 
           <tbody className="text-gray-700">
-            {employees.length > 0 ? (
-              employees.map((employee) => (
+            {filteredEmployees.length > 0 ? (
+              filteredEmployees.map((employee) => (
                 <Employees key={employee.id} employee={employee} />
               ))
             ) : (
@@ -54,10 +123,10 @@ function EmployeesFeedback({employees, loading}) {
         </table>
       </div>
 
-      {/* Mobile Card Layout */}
+      {/* 📱 Mobile Cards */}
       <div className="sm:hidden mt-5 space-y-4">
-        {employees.length > 0 ? (
-          employees.map((employee) => (
+        {filteredEmployees.length > 0 ? (
+          filteredEmployees.map((employee) => (
             <div
               key={employee.id}
               className="border border-gray-200 rounded-md p-4 shadow-sm"
@@ -72,8 +141,8 @@ function EmployeesFeedback({employees, loading}) {
               <p className="text-gray-700 text-sm">
                 <span className="font-bold">Score:</span> {employee.score}
               </p>
-              <p className="text-gray-700 sm:text-sm ">
-                <span className="font-bold ">Notes:</span> {employee.notes}
+              <p className="text-gray-700 text-sm">
+                <span className="font-bold">Notes:</span> {employee.notes}
               </p>
             </div>
           ))
@@ -84,10 +153,10 @@ function EmployeesFeedback({employees, loading}) {
         )}
       </div>
 
-      {/* Chart section */}
+      {/* 📊 Chart */}
       <div className="mt-8 flex justify-center">
         <div className="w-full sm:w-2/3 md:w-1/2 lg:w-1/3">
-          <PieChart employees={employees} />
+          <PieChart employees={filteredEmployees} />
         </div>
       </div>
     </div>
