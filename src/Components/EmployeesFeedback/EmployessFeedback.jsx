@@ -7,17 +7,7 @@ function EmployeesFeedback({ employees = [], loading }) {
   const [scoreFilter, setScoreFilter] = useState(""); // score filter
   const [startDate, setStartDate] = useState(""); // date from
   const [endDate, setEndDate] = useState(""); // date to
-
-  // لو البيانات لسه بتتحمل
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-60 text-gray-500">
-        <GiSpinningBlades className="animate-spin text-3xl" />
-      </div>
-    );
-  }
-
-  // 🧠 فلترة الموظفين حسب score والتاريخ
+    // 🧠 فلترة الموظفين حسب score والتاريخ
   const filteredEmployees = useMemo(() => {
     return employees.filter((emp) => {
       const empDate = new Date(emp.date);
@@ -32,6 +22,17 @@ function EmployeesFeedback({ employees = [], loading }) {
       return matchScore && matchStart && matchEnd;
     });
   }, [employees, scoreFilter, startDate, endDate]);
+
+  // لو البيانات لسه بتتحمل
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-60 text-gray-500">
+        <GiSpinningBlades className="animate-spin text-3xl" />
+      </div>
+    );
+  }
+
+
 
   return (
     <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 bg-white">
