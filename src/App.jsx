@@ -1,25 +1,22 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import Layout from "./Layout/Layout";
-import Dashboard from "./Components/Dashboard/Dashboard";
-import Home from "./Components/Home/Home"; // ✅ Make sure this file exists
-import Admin from "./Components/AdminLogin/Admin";
-
-import Chat from "./Components/AdminLogin/Chat";
+import Home from "./Pages/Home/Home"; 
+import Admin from './Pages/Admin/Admin'
+import Chat from './Pages/Chat/Chat'
+import Dashboard from "./Pages/Dashboard/Dashboard";
 
 
 const router = createBrowserRouter([
   {
-    path: "/", // root layout
+    path: "/", 
     element: <Layout />,
     children: [
-      { index: true, element: <Home /> }, // ✅ shows Home at root "/"
+      { index: true, element: <Home /> },
       { path: "dashboard", element: <Dashboard /> },
 	  {path:'admin-login',element:<Admin/>},
       { path: "chat", element: <Chat  /> },
-    //   { path: "chat-service", element: <ChatService  /> },
-	// {path:'admin-chat',element:<AdminChat/>},
-    //   { path: "employee-chat", element: <EmployeeChat /> },
+   
     ],
   },
 

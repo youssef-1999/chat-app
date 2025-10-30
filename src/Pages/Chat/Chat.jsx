@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { db } from "../Firebase/Firebase";
 import {
   addDoc,
   collection,
@@ -10,6 +9,7 @@ import {
   writeBatch,
   doc,
 } from "firebase/firestore";
+import { db } from "../../Firebase/Firebase";
 
 function Chat() {
   const [messages, setMessages] = useState([]);
@@ -28,10 +28,8 @@ function Chat() {
     const q = query(collection(db, "messages"), orderBy("timestamp"));
 
     const unsubscribe = onSnapshot(q, async (snapshot) => {
-      // جمع كل الرسائل من الـ snapshot
       const docs = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
 
-      // نفلتر الرسائل اللي بين الاتنين
       const msgs = docs.filter(
         (m) =>
           (m.senderID === currentUserId && m.receiverID === selectedUserId) ||
@@ -40,13 +38,11 @@ function Chat() {
 
       setMessages(msgs);
 
-      // الآن نحدّث كل الرسائل اللي رايحة لِـ currentUser وماتقراش (isRead === false)
       const unreadToMark = msgs.filter(
         (m) => m.receiverID === currentUserId && !m.isRead
       );
 
       if (unreadToMark.length > 0) {
-        // استخدام batch لتقليل عدد العمليات وبشكل أسرع وأكثر أماناً
         const batch = writeBatch(db);
         unreadToMark.forEach((m) => {
           const ref = doc(db, "messages", m.id);
@@ -55,8 +51,6 @@ function Chat() {
 
         try {
           await batch.commit();
-          // بعد الـ commit، الـ Header (اللي مستمع عبر useMessagesListener)
-          // سيلاحظ التغيير ويحدّث العداد تلقائيًا.
         } catch (err) {
           console.error("Failed to mark messages as read:", err);
         }
@@ -75,7 +69,7 @@ function Chat() {
         receiverID: selectedUserId,
         message,
         timestamp: serverTimestamp(),
-        isRead: false, // مهم: أول ما تتبعت تكون غير مقروءة
+        isRead: false, 
       });
       setMessage("");
     } catch (err) {

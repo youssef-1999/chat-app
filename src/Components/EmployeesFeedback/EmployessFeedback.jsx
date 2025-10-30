@@ -2,10 +2,8 @@ import React from "react";
 import { GiSpinningBlades } from "react-icons/gi";
 import PieChart from "../PieChart/PieChart";
 import Employees from "./Employees";
-import useEmployees from "../../Hooks/useEmployee";
 
-function EmployeesFeedback() {
-  const { employees, loading } = useEmployees(1000);
+function EmployeesFeedback({employees, loading}) {
 
   if (loading) {
     return (
@@ -24,7 +22,6 @@ function EmployeesFeedback() {
         Review and analyze employee feedback data
       </p>
 
-      {/* Desktop Table */}
       <div className="hidden sm:block overflow-x-auto mt-5 rounded-md shadow-sm border border-gray-200">
         <table className="min-w-full text-sm">
           <thead className="text-gray-700 capitalize text-sm font-semibold bg-gray-100">

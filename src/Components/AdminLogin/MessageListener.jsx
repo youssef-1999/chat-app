@@ -1,12 +1,10 @@
 // src/hooks/useMessagesListener.js
 import { useEffect, useState } from "react";
-import { db } from "../Firebase/Firebase";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { db } from "../../Firebase/Firebase";
 
-/**
- * Hook: يعيد عدد الرسائل غير المقروءة وآخر رسالة وصلت للمستخدم الحالي
- * currentUserId: id المستخدم (مثال: "admin123" أو employeeId)
- */
+
+ 
 export default function useMessagesListener(currentUserId) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [latestMessage, setLatestMessage] = useState(null);
@@ -14,7 +12,6 @@ export default function useMessagesListener(currentUserId) {
   useEffect(() => {
     if (!currentUserId) return;
 
-    // نجيب كل الرسائل الموجّهة للمستخدم واللي لسا مش مقروءة
     const q = query(
       collection(db, "messages"),
       where("receiverID", "==", currentUserId),
