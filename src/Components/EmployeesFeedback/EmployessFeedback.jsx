@@ -4,10 +4,9 @@ import PieChart from "../PieChart/PieChart";
 import Employees from "./Employees";
 
 function EmployeesFeedback({ employees = [], loading }) {
-  const [scoreFilter, setScoreFilter] = useState(""); // score filter
-  const [startDate, setStartDate] = useState(""); // date from
-  const [endDate, setEndDate] = useState(""); // date to
-    // 🧠 فلترة الموظفين حسب score والتاريخ
+  const [scoreFilter, setScoreFilter] = useState(""); 
+  const [startDate, setStartDate] = useState(""); 
+  const [endDate, setEndDate] = useState(""); 
   const filteredEmployees = useMemo(() => {
     return employees.filter((emp) => {
       const empDate = new Date(emp.date);
